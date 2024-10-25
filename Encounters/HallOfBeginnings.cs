@@ -63,28 +63,50 @@ using Microsoft.Xna.Framework.Audio;
 using static System.Reflection.Metadata.BlobBuilder;
 using Dawnsbury.Core.CharacterBuilder.FeatsDb;
 using Dawnsbury.Campaign.Encounters;
+using Dawnsbury.Campaign.Path;
+using Dawnsbury.Campaign.Path.CampaignStops;
 using Dawnsbury.Core.Animations.Movement;
 using static Dawnsbury.Mods.Creatures.RoguelikeMode.ModEnums;
+using Dawnsbury.Campaign.Encounters.Quest_for_the_Golden_Candelabra;
+using Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level2;
+using Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level1;
 
-namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
+namespace Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters
+{
 
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal static class ModEnums {
-        internal enum CreatureId {
-            UNSEEN_GUARDIAN,
-            HUNTING_SPIDER,
-            DROW_ASSASSIN,
-            DROW_FIGHTER,
-            DROW_PRIESTESS,
-            DROW_ARCANIST,
-            DROW_INQUISITRIX,
-            DRIDER
+    internal class HallOfBeginnings : Encounter {
+
+        public HallOfBeginnings(string filename) : base("Hall of Beginnings", filename, new List<Item>() { }, 0) {
+
+            // Run setup
+            //this.ReplaceTriggerWithCinematic(TriggerName.StartOfEncounter, async battle => {
+            //    battle.SpawnCreature(CreatureList.Creatures[ModEnums.CreatureId.HUNTING_SPIDER](battle.Encounter), battle.Enemy, battle.Map.Tiles[5, 5]);
+
+            //    CampaignState? campaign = battle.CampaignState;
+
+            //    if (campaign != null && campaign.AdventurePath != null) {
+            //        GenerateRun(campaign.AdventurePath.CampaignStops);
+            //    }
+            //});
+
+            //// Run cleanup
+            //this.ReplaceTriggerWithCinematic(TriggerName.AllEnemiesDefeated, async battle => {
+            //    var test = 5;
+            //});
         }
 
-        internal enum EncounterType {
-            NORMAL,
-            ELITE,
-            BOSS
-        }
+        //private void GenerateRun(List<CampaignStop> path) {
+        //    //CampaignStop[]? oldPath = new CampaignStop[] { path[0], path[1], path[2] };
+
+        //    //path = new List<CampaignStop>();
+        //    //foreach (CampaignStop stop in oldPath) {
+                
+        //    //}
+        //    path.Add(new TypedEncounterCampaignStop<HallOfSmokeLv2>());
+        //    path.Add(new TypedEncounterCampaignStop<DrowAmbushLv2>());
+        //    //path.Add
+        //}
+
     }
 }

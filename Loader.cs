@@ -66,8 +66,16 @@ using Dawnsbury.Campaign.Encounters;
 using Dawnsbury.Core.Animations.Movement;
 using static Dawnsbury.Mods.Creatures.RoguelikeMode.ModEnums;
 using static Dawnsbury.Mods.Creatures.RoguelikeMode.ModEnums;
+using Dawnsbury.Campaign.Encounters.Tutorial;
+using HarmonyLib;
+using Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters;
+using Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level1;
+using Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level2;
+using Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level3;
+using Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.BossFights;
 
-namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
+namespace Dawnsbury.Mods.Creatures.RoguelikeMode
+{
 
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public static class Loader {
@@ -75,8 +83,53 @@ namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
 
         [DawnsburyDaysModMainMethod]
         public static void LoadMod() {
+            var harmony = new Harmony("Dawnsbury.Mods.GameModes.RoguelikeMode");
+            Harmony.DEBUG = true;
+            harmony.PatchAll();
+
             CreatureList.LoadCreatures();
             ScriptHooks.LoadHooks();
+            LoadEncounters();
+        }
+
+        private static void LoadEncounters() {
+            //ModManager.RegisterEncounter<HallOfBeginnings>("HallOfBeginnings.tmx");
+            //ModManager.RegisterEncounter<DrowAmbushLv1>("RoguelikeEncounter/DrowAmbushLv1.tmx");
+            //ModManager.RegisterEncounter<DrowAmbushLv2>("RoguelikeEncounter/DrowAmbushLv2.tmx");
+            //ModManager.RegisterEncounter<DrowAmbushLv3>("RoguelikeEncounter/DrowAmbushLv3.tmx");
+            //ModManager.RegisterEncounter<InquisitrixTrapLv1>("RoguelikeEncounter/InquisitrixTrapLv1.tmx");
+            //ModManager.RegisterEncounter<InquisitrixTrapLv2>("RoguelikeEncounter/InquisitrixTrapLv2.tmx");
+            //ModManager.RegisterEncounter<InquisitrixTrapLv3>("RoguelikeEncounter/InquisitrixTrapLv3.tmx");
+            //ModManager.RegisterEncounter<RatSwarmLv1>("RoguelikeEncounter/RatSwarmLv1.tmx");
+            //ModManager.RegisterEncounter<RatSwarmLv2>("RoguelikeEncounter/RatSwarmLv2.tmx");
+            //ModManager.RegisterEncounter<RatSwarmLv3>("RoguelikeEncounter/RatSwarmLv3.tmx");
+
+            //// Elite Fights
+            //ModManager.RegisterEncounter<HallOfSmokeLv1>("RoguelikeEncounters/Elite_HallOfSmokeLv1.tmx");
+            //ModManager.RegisterEncounter<HallOfSmokeLv2>("RoguelikeEncounters/Elite_HallOfSmokeLv2.tmx");
+            //ModManager.RegisterEncounter<HallOfSmokeLv3>("RoguelikeEncounters/Elite_HallOfSmokeLv3.tmx");
+
+            //// Boss fights
+            //ModManager.RegisterEncounter<Boss_DriderFight>("RoguelikeEncounters/Boss_DriderFight.tmx");
+
+            ModManager.RegisterEncounter<HallOfBeginnings>("HallOfBeginnings.tmx");
+            ModManager.RegisterEncounter<DrowAmbushLv1>("DrowAmbushLv1.tmx");
+            ModManager.RegisterEncounter<DrowAmbushLv2>("DrowAmbushLv2.tmx");
+            ModManager.RegisterEncounter<DrowAmbushLv3>("DrowAmbushLv3.tmx");
+            ModManager.RegisterEncounter<InquisitrixTrapLv1>("InquisitrixTrapLv1.tmx");
+            ModManager.RegisterEncounter<InquisitrixTrapLv2>("InquisitrixTrapLv2.tmx");
+            ModManager.RegisterEncounter<InquisitrixTrapLv3>("InquisitrixTrapLv3.tmx");
+            ModManager.RegisterEncounter<RatSwarmLv1>("RatSwarmLv1.tmx");
+            ModManager.RegisterEncounter<RatSwarmLv2>("RatSwarmLv2.tmx");
+            ModManager.RegisterEncounter<RatSwarmLv3>("RatSwarmLv3.tmx");
+
+            // Elite Fights
+            ModManager.RegisterEncounter<HallOfSmokeLv1>("Elite_HallOfSmokeLv1.tmx");
+            ModManager.RegisterEncounter<HallOfSmokeLv2>("Elite_HallOfSmokeLv2.tmx");
+            ModManager.RegisterEncounter<HallOfSmokeLv3>("Elite_HallOfSmokeLv3.tmx");
+
+            // Boss fights
+            ModManager.RegisterEncounter<Boss_DriderFight>("Boss_DriderFight.tmx");
         }
     }
 }

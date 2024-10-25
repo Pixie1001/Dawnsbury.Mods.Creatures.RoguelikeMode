@@ -65,26 +65,15 @@ using Dawnsbury.Core.CharacterBuilder.FeatsDb;
 using Dawnsbury.Campaign.Encounters;
 using Dawnsbury.Core.Animations.Movement;
 using static Dawnsbury.Mods.Creatures.RoguelikeMode.ModEnums;
+using static Dawnsbury.Mods.Creatures.RoguelikeMode.ModEnums;
 
 namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
-
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal static class ModEnums {
-        internal enum CreatureId {
-            UNSEEN_GUARDIAN,
-            HUNTING_SPIDER,
-            DROW_ASSASSIN,
-            DROW_FIGHTER,
-            DROW_PRIESTESS,
-            DROW_ARCANIST,
-            DROW_INQUISITRIX,
-            DRIDER
-        }
+    internal static class QEffectIds {
 
-        internal enum EncounterType {
-            NORMAL,
-            ELITE,
-            BOSS
-        }
+        internal static QEffectId LethargyPoison { get; } = ModManager.RegisterEnumMember<QEffectId>("RL_Drow Lethargy Poison");
+        internal static QEffectId Lurking { get; } = ModManager.RegisterEnumMember<QEffectId>("RL_Lurking");
+        internal static QEffectId Stalked { get; } = ModManager.RegisterEnumMember<QEffectId>("RL_Stalked");
+        internal static QEffectId ExtraTurn { get; } = ModManager.RegisterEnumMember<QEffectId>("RL_ExtraTurnMiniBoss");
     }
 }

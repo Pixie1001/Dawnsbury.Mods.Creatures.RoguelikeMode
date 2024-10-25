@@ -6,20 +6,11 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
-using Dawnsbury;
 using Dawnsbury.Audio;
 using Dawnsbury.Auxiliary;
 using Dawnsbury.Core;
 using Dawnsbury.Core.Mechanics.Rules;
 using Dawnsbury.Core.Animations;
-using Dawnsbury.Core.CharacterBuilder;
-using Dawnsbury.Core.CharacterBuilder.AbilityScores;
-using Dawnsbury.Core.CharacterBuilder.Feats;
-using Dawnsbury.Core.CharacterBuilder.FeatsDb.Common;
-using Dawnsbury.Core.CharacterBuilder.FeatsDb.Spellbook;
-using Dawnsbury.Core.CharacterBuilder.FeatsDb.TrueFeatDb;
-using Dawnsbury.Core.CharacterBuilder.Selections.Options;
-using Dawnsbury.Core.CharacterBuilder.Spellcasting;
 using Dawnsbury.Core.CombatActions;
 using Dawnsbury.Core.Coroutines;
 using Dawnsbury.Core.Coroutines.Options;
@@ -30,9 +21,6 @@ using Dawnsbury.Core.Intelligence;
 using Dawnsbury.Core.Mechanics;
 using Dawnsbury.Core.Mechanics.Core;
 using Dawnsbury.Core.Mechanics.Enumerations;
-using Dawnsbury.Core.Mechanics.Targeting;
-using Dawnsbury.Core.Mechanics.Targeting.TargetingRequirements;
-using Dawnsbury.Core.Mechanics.Targeting.Targets;
 using Dawnsbury.Core.Mechanics.Treasure;
 using Dawnsbury.Core.Possibilities;
 using Dawnsbury.Core.Roller;
@@ -63,28 +51,35 @@ using Microsoft.Xna.Framework.Audio;
 using static System.Reflection.Metadata.BlobBuilder;
 using Dawnsbury.Core.CharacterBuilder.FeatsDb;
 using Dawnsbury.Campaign.Encounters;
+using Dawnsbury.Campaign.Path;
+using Dawnsbury.Campaign.Path.CampaignStops;
 using Dawnsbury.Core.Animations.Movement;
 using static Dawnsbury.Mods.Creatures.RoguelikeMode.ModEnums;
+using Dawnsbury.Campaign.Encounters.Quest_for_the_Golden_Candelabra;
 
-namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
+namespace Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level3
+{
 
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal static class ModEnums {
-        internal enum CreatureId {
-            UNSEEN_GUARDIAN,
-            HUNTING_SPIDER,
-            DROW_ASSASSIN,
-            DROW_FIGHTER,
-            DROW_PRIESTESS,
-            DROW_ARCANIST,
-            DROW_INQUISITRIX,
-            DRIDER
+    internal class InquisitrixTrapLv3 : Encounter
+    {
+
+        public InquisitrixTrapLv3(string filename) : base("Inquisitrix Trap", filename, new List<Item>() { }, 0)
+        {
+
+            this.RewardGold = CommonEncounterFuncs.GetGoldReward(this.CharacterLevel, ModEnums.EncounterType.NORMAL);
+
+            //this.CharacterLevel = 1;
+
+            //// Run setup
+            //this.ReplaceTriggerWithCinematic(TriggerName.StartOfEncounter, async battle => {
+            //});
+
+            //// Run cleanup
+            //this.ReplaceTriggerWithCinematic(TriggerName.AllEnemiesDefeated, async battle => {
+
+            //});
         }
 
-        internal enum EncounterType {
-            NORMAL,
-            ELITE,
-            BOSS
-        }
     }
 }

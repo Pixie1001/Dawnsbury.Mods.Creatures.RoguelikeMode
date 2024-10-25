@@ -6,20 +6,11 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
-using Dawnsbury;
 using Dawnsbury.Audio;
 using Dawnsbury.Auxiliary;
 using Dawnsbury.Core;
 using Dawnsbury.Core.Mechanics.Rules;
 using Dawnsbury.Core.Animations;
-using Dawnsbury.Core.CharacterBuilder;
-using Dawnsbury.Core.CharacterBuilder.AbilityScores;
-using Dawnsbury.Core.CharacterBuilder.Feats;
-using Dawnsbury.Core.CharacterBuilder.FeatsDb.Common;
-using Dawnsbury.Core.CharacterBuilder.FeatsDb.Spellbook;
-using Dawnsbury.Core.CharacterBuilder.FeatsDb.TrueFeatDb;
-using Dawnsbury.Core.CharacterBuilder.Selections.Options;
-using Dawnsbury.Core.CharacterBuilder.Spellcasting;
 using Dawnsbury.Core.CombatActions;
 using Dawnsbury.Core.Coroutines;
 using Dawnsbury.Core.Coroutines.Options;
@@ -56,35 +47,39 @@ using Dawnsbury.Core.Mechanics.Damage;
 using System.Runtime.CompilerServices;
 using System.ComponentModel.Design;
 using System.Text;
-using static Dawnsbury.Core.CharacterBuilder.FeatsDb.TrueFeatDb.BarbarianFeatsDb.AnimalInstinctFeat;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Diagnostics.Metrics;
 using Microsoft.Xna.Framework.Audio;
 using static System.Reflection.Metadata.BlobBuilder;
 using Dawnsbury.Core.CharacterBuilder.FeatsDb;
 using Dawnsbury.Campaign.Encounters;
+using Dawnsbury.Campaign.Path;
+using Dawnsbury.Campaign.Path.CampaignStops;
 using Dawnsbury.Core.Animations.Movement;
 using static Dawnsbury.Mods.Creatures.RoguelikeMode.ModEnums;
+using Dawnsbury.Campaign.Encounters.Quest_for_the_Golden_Candelabra;
 
-namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
+namespace Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level2
+{
 
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal static class ModEnums {
-        internal enum CreatureId {
-            UNSEEN_GUARDIAN,
-            HUNTING_SPIDER,
-            DROW_ASSASSIN,
-            DROW_FIGHTER,
-            DROW_PRIESTESS,
-            DROW_ARCANIST,
-            DROW_INQUISITRIX,
-            DRIDER
+    internal class RatSwarmLv2 : Encounter
+    {
+
+        public RatSwarmLv2(string filename) : base("Rat Swarm", filename, new List<Item>() { }, 0)
+        {
+
+            this.CharacterLevel = 2;
+            this.RewardGold = CommonEncounterFuncs.GetGoldReward(this.CharacterLevel, ModEnums.EncounterType.NORMAL);
+
+            // Run setup
+            this.ReplaceTriggerWithCinematic(TriggerName.StartOfEncounter, async battle => {
+                //CommonEncounterFuncs.ApplyWeakAdjustments(battle);
+            });
+
+            //// Run cleanup
+            //this.ReplaceTriggerWithCinematic(TriggerName.AllEnemiesDefeated, async battle => {
+
+            //});
         }
 
-        internal enum EncounterType {
-            NORMAL,
-            ELITE,
-            BOSS
-        }
     }
 }

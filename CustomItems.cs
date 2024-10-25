@@ -65,26 +65,22 @@ using Dawnsbury.Core.CharacterBuilder.FeatsDb;
 using Dawnsbury.Campaign.Encounters;
 using Dawnsbury.Core.Animations.Movement;
 using static Dawnsbury.Mods.Creatures.RoguelikeMode.ModEnums;
+using static Dawnsbury.Mods.Creatures.RoguelikeMode.ModEnums;
+using System.IO;
 
 namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
 
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal static class ModEnums {
-        internal enum CreatureId {
-            UNSEEN_GUARDIAN,
-            HUNTING_SPIDER,
-            DROW_ASSASSIN,
-            DROW_FIGHTER,
-            DROW_PRIESTESS,
-            DROW_ARCANIST,
-            DROW_INQUISITRIX,
-            DRIDER
-        }
+    internal static class CustomItems {
 
-        internal enum EncounterType {
-            NORMAL,
-            ELITE,
-            BOSS
-        }
+        public static ItemName ScourgeOfFangs { get; } = ModManager.RegisterNewItemIntoTheShop("ScourgeOfFangs", itemName => {
+            return new Item(itemName, IllustrationName.Whip, "scourge of fangs", 3, 0,
+                new Trait[] { Trait.Magical, Trait.Finesse, Trait.Reach, Trait.Flail, Trait.Trip, Trait.Martial, Trait.Disarm, Trait.VersatileP, Trait.DoNotAddToShop })
+            .WithMainTrait(Trait.Whip)
+            .WithWeaponProperties(new WeaponProperties("1d4", DamageKind.Slashing) {
+                ItemBonus = 1,
+            }
+            .WithAdditionalDamage("1d6", DamageKind.Mental));
+        });
     }
 }

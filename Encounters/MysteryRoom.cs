@@ -63,28 +63,19 @@ using Microsoft.Xna.Framework.Audio;
 using static System.Reflection.Metadata.BlobBuilder;
 using Dawnsbury.Core.CharacterBuilder.FeatsDb;
 using Dawnsbury.Campaign.Encounters;
+using Dawnsbury.Campaign.Path;
+using Dawnsbury.Campaign.Path.CampaignStops;
 using Dawnsbury.Core.Animations.Movement;
 using static Dawnsbury.Mods.Creatures.RoguelikeMode.ModEnums;
+using Dawnsbury.Campaign.Encounters.Quest_for_the_Golden_Candelabra;
 
-namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
+namespace Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters {
 
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal static class ModEnums {
-        internal enum CreatureId {
-            UNSEEN_GUARDIAN,
-            HUNTING_SPIDER,
-            DROW_ASSASSIN,
-            DROW_FIGHTER,
-            DROW_PRIESTESS,
-            DROW_ARCANIST,
-            DROW_INQUISITRIX,
-            DRIDER
+    internal class MysteryRoom : Encounter {
+
+        public MysteryRoom(string filename) : base("Mystery Room", filename, new List<Item>() { }, 0) {
         }
 
-        internal enum EncounterType {
-            NORMAL,
-            ELITE,
-            BOSS
-        }
     }
 }

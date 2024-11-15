@@ -63,8 +63,8 @@ using Dawnsbury.Campaign.Encounters.Quest_for_the_Golden_Candelabra;
 namespace Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level1
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class DrowAmbushLv1 : Level1Encounter
+    internal class WitchCovenLv1 : Level1EliteEncounter
     {
-        public DrowAmbushLv1(string filename) : base("Drow Ambush", filename) { }
+        public WitchCovenLv1(string filename) : base("Witch Coven", filename) { }
     }
 }

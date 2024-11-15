@@ -60,11 +60,11 @@ using Dawnsbury.Core.Animations.Movement;
 using static Dawnsbury.Mods.Creatures.RoguelikeMode.ModEnums;
 using Dawnsbury.Campaign.Encounters.Quest_for_the_Golden_Candelabra;
 
-namespace Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level1
+namespace Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level3
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class DrowAmbushLv1 : Level1Encounter
+    internal class WitchCovenLv3 : Level3EliteEncounter
     {
-        public DrowAmbushLv1(string filename) : base("Drow Ambush", filename) { }
+        public WitchCovenLv3(string filename) : base("Witch Coven", filename) { }
     }
 }

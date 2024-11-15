@@ -47,9 +47,6 @@ using Dawnsbury.Core.Mechanics.Damage;
 using System.Runtime.CompilerServices;
 using System.ComponentModel.Design;
 using System.Text;
-using static Dawnsbury.Core.CharacterBuilder.FeatsDb.TrueFeatDb.BarbarianFeatsDb.AnimalInstinctFeat;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Diagnostics.Metrics;
 using Microsoft.Xna.Framework.Audio;
 using static System.Reflection.Metadata.BlobBuilder;
 using Dawnsbury.Core.CharacterBuilder.FeatsDb;
@@ -59,12 +56,30 @@ using Dawnsbury.Campaign.Path.CampaignStops;
 using Dawnsbury.Core.Animations.Movement;
 using static Dawnsbury.Mods.Creatures.RoguelikeMode.ModEnums;
 using Dawnsbury.Campaign.Encounters.Quest_for_the_Golden_Candelabra;
+using System.Xml.Linq;
 
-namespace Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level1
+namespace Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level3
 {
+
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class DrowAmbushLv1 : Level1Encounter
+    internal class Level3EliteEncounter : Encounter
     {
-        public DrowAmbushLv1(string filename) : base("Drow Ambush", filename) { }
+
+        public Level3EliteEncounter(string name, string filename, List<Item> rewards=null) : base(name, filename, rewards, 0) {
+            this.CharacterLevel = 3;
+            this.RewardGold = CommonEncounterFuncs.GetGoldReward(CharacterLevel, EncounterType.ELITE);
+
+            // Run setup
+            this.ReplaceTriggerWithCinematic(TriggerName.StartOfEncounter, async battle => {
+                CommonEncounterFuncs.ApplyEliteAdjustments(battle);
+                await CommonEncounterFuncs.StandardEncounterSetup(battle);
+            });
+
+            // Run cleanup
+            this.ReplaceTriggerWithCinematic(TriggerName.AllEnemiesDefeated, async battle => {
+                await CommonEncounterFuncs.StandardEncounterResolve(battle);
+            });
+        }
+
     }
 }

@@ -64,23 +64,9 @@ namespace Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level1
 {
 
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class InquisitrixTrapLv1 : Encounter
+    internal class InquisitrixTrapLv1 : Level1Encounter
     {
-
-        public InquisitrixTrapLv1(string filename) : base("Inquisitrix Trap", filename, new List<Item>() { }, 0)
-        {
-            this.RewardGold = CommonEncounterFuncs.GetGoldReward(this.CharacterLevel, ModEnums.EncounterType.NORMAL);
-            //this.CharacterLevel = 1;
-
-            //// Run setup
-            //this.ReplaceTriggerWithCinematic(TriggerName.StartOfEncounter, async battle => {
-            //});
-
-            //// Run cleanup
-            //this.ReplaceTriggerWithCinematic(TriggerName.AllEnemiesDefeated, async battle => {
-
-            //});
-        }
+        public InquisitrixTrapLv1(string filename) : base("Inquisitrix Trap", filename) {}
 
     }
 }

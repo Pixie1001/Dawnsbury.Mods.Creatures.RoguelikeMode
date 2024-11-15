@@ -10,22 +10,79 @@ using Dawnsbury.Campaign.Path.CampaignStops;
 using Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters;
 using Dawnsbury.Phases.Menus;
 using HarmonyLib;
+using Dawnsbury.Core.CharacterBuilder;
+using Dawnsbury.Core.Mechanics.Treasure;
+using Dawnsbury.Core.Mechanics.Enumerations;
+using Dawnsbury.Core.Mechanics.Rules;
+using System.Data;
+using System.Runtime.CompilerServices;
 
 namespace Dawnsbury.Mods.Creatures.RoguelikeMode.Patches {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     [HarmonyLib.HarmonyPatch]
     public class HarmonyPatches {
 
+        // internal static void GenerateTemplatesAndFactoriesFor(ItemName[] itemNames)
+
+        //[HarmonyPostfix]
+        //[HarmonyPatch(typeof(Items), "GenerateTemplatesAndFactoriesFor")]
+        //private static void CanUsePatch(ItemName[] itemNames) {
+
+        //    if (item != null && item.HasTrait(Traits.Wand)) {
+        //        foreach (Trait trait in __instance.Calculated.SpellTraditionsKnown) {
+        //            if (item.HasTrait(trait))
+        //                __result = true;
+        //        }
+        //    }
+        //}
+
+        [HarmonyPostfix]
+        //[HarmonyPatch(typeof(CampaignState), MethodType.Constructor)]
+        [HarmonyPatch(typeof(CampaignState), MethodType.Constructor, new Type[] { typeof(List<CharacterSheet>), typeof(AdventurePath) })]
+        // new Type[] { typeof(List<CharacterSheet>), typeof(AdventurePath) }
+
+        private static void CampaignStatePatch(CampaignState __instance, List<CharacterSheet> heroes, AdventurePath adventurePath) {
+            if (__instance.AdventurePath != null && __instance.AdventurePath.Id == "RoguelikeMode")
+            __instance.Tags.Add("new run", "true");
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(RunestoneRules), "AttachSubitem")]
+        private static bool AttachSubitemPatch(ref bool __result, Item runestone, Item? equipment) {
+            if (runestone.RuneProperties == null) {
+                return true;
+            }
+
+            if (equipment != null && equipment.HasTrait(Traits.CannotHavePropertyRune) && runestone.RuneProperties.RuneKind == RuneKind.WeaponProperty) {
+                __result = false;
+                return false;
+            }
+            if (equipment != null && equipment.HasTrait(Traits.LegendaryItem)) {
+                __result = false;
+                return false;
+            }
+            return true;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CharacterSheet), "CanUse")]
+        private static void CanUsePatch(CharacterSheet __instance, ref bool __result, Item? item) {
+            if (item != null && item.HasTrait(Traits.Wand)) {
+                __result = false;
+                foreach (Trait trait in __instance.Calculated.SpellTraditionsKnown) {
+                    if (item.HasTrait(trait)) {
+                        __result = true;
+                    }
+                }
+            }
+        }
+
         [HarmonyPrefix]
         [HarmonyPatch(typeof(CampaignMenuPhase), "CreateViews")]
         private static void CreateViewsPatch(CampaignMenuPhase __instance) {
-            //_instance.CurrentCampaignState.
-
-            // If last stop is a Dawnsbury stop, with name 'not setup', then run this code to replace encounters.
-
             CampaignState state = __instance.CurrentCampaignState;
 
-            if (state.AdventurePath.CampaignStops[2].Name == "Hall of Beginnings") {
+            if (state.AdventurePath.CampaignStops[2].Name == "Hall of Beginnings" || state.Tags.ContainsKey("new run")) {
                 GenerateRun(state);
             }
         }
@@ -39,8 +96,14 @@ namespace Dawnsbury.Mods.Creatures.RoguelikeMode.Patches {
 
             EncounterTables.LoadEncounterTables();
 
+            // Debug for testing
+            //if (campaign.Tags.ContainsKey("new run")) {
+            //    campaign.Tags.Remove("new run");
+            //}
+
             // Declare campaign tags
-            if (!campaign.Tags.ContainsKey("seed")) {
+            if (!campaign.Tags.ContainsKey("seed") || campaign.Tags.ContainsKey("new run")) {
+                campaign.Tags.Clear();
                 campaign.Tags.Add("seed", R.Next(100000).ToString());
             }
 

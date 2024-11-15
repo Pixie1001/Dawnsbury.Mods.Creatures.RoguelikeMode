@@ -77,8 +77,14 @@ namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
             DROW_FIGHTER,
             DROW_PRIESTESS,
             DROW_ARCANIST,
+            DROW_SHADOWCASTER,
             DROW_INQUISITRIX,
-            DRIDER
+            DROW_TEMPLEGUARD,
+            DROW_SHOOTIST,
+            DRIDER,
+            WITCH_CRONE,
+            WITCH_MOTHER,
+            WITCH_MAIDEN
         }
 
         internal enum EncounterType {

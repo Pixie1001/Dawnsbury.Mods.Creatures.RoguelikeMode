@@ -69,6 +69,7 @@ using static Dawnsbury.Mods.Creatures.RoguelikeMode.ModEnums;
 using System.IO;
 using System.Text.Json.Nodes;
 using System.Reflection.Metadata;
+using Dawnsbury.Core.CharacterBuilder.FeatsDb.Champion;
 
 namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
 
@@ -81,11 +82,11 @@ namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
                         return null;
                     }
 
-                    if (action.HasTrait(Trait.Mental)) {
+                    if (action.HasTrait(Trait.Mental) && defence != Defense.AC) {
                         return new Bonus(2, BonusType.Status, self.Name);
                     }
 
-                    if (action.SpellId != SpellId.None) {
+                    if (action.SpellId != SpellId.None && defence != Defense.AC) {
                         return new Bonus(1, BonusType.Status, self.Name);
                     }
 
@@ -117,9 +118,11 @@ namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
 
         public static QEffect SpiderVenomAttack(int baseDC, string weapon) {
             return new QEffect("Spider Poison", "Set Later") {
-                StartOfCombat = async self => {
-                    self.Name += $" (DC {baseDC + self.Owner.Level})";
-                    self.Description = $"Enemies damaged by {self.Owner.Name}'s {weapon} attack are afflicted by Spider Venom: {Affliction.CreateSpiderVenom().StagesDescription}";
+                StateCheck = async self => {
+                    if (self.Description == "Set Later") {
+                        self.Name += $" (DC {baseDC + self.Owner.Level})";
+                        self.Description = $"Enemies damaged by {self.Owner.Name}'s {weapon} attack are afflicted by Spider Venom: {Affliction.CreateSpiderVenom().StagesDescription}";
+                    }
                 },
                 AfterYouDealDamage = async (attacker, action, target) => {
                     if (action.Name == weapon || action.Name == $"Strike ({weapon})") {
@@ -145,6 +148,24 @@ namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
             };
         }
 
+        //public static QEffect AmuletOfAbeyance() {
+        //    QEffect effect = new QEffect("Amulet of Abeyance {icon:Reaction}", "{b}Effect{/b} You or a member of your coven within 15-feet would be damaged by an attack.");
+        //    effect.AddGrantingOfTechnical(cr => cr.HasTrait(Traits.Witch), qf => {
+        //        qf.YouAreDealtDamage = async (self, a, damage, d) => {
+        //            if (effect.Owner.DistanceTo(d) > 3) {
+        //                return null;
+        //            }
+                    
+        //            if (effect.UseReaction()) {
+        //                return new ReduceDamageModification(3 + effect.Owner.Level, "Amulet of Abeyance");
+        //            }
+        //            return null;
+        //        };
+        //    });
+
+        //    return effect;
+        //}
+
         public static QEffect WebAttack(int baseDC) {
             return new QEffect() {
                 Tag = false,
@@ -155,6 +176,7 @@ namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
                         ShortDescription = "On a hit, the target is immobilized by a web trap, until they use the Escape action to free themselves."
                     }
                     .WithProjectileCone(IllustrationName.Web, 5, ProjectileKind.Cone)
+                    .WithSoundEffect(SfxName.AeroBlade)
                     .WithActionCost(1)
                     .WithActiveRollSpecification(new ActiveRollSpecification(Checks.Attack(new Item(IllustrationName.Web, "Web", new Trait[] { Trait.Attack, Trait.Unarmed, Trait.Finesse, Trait.Ranged })), Checks.DefenseDC(Defense.AC)))
                     .WithGoodnessAgainstEnemy((targeting, attacker, defender) => {
@@ -208,7 +230,7 @@ namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
 
                                     return (ActionPossibility)combatAction
                                     .WithActiveRollSpecification(activeRollSpecification)
-                                    .WithSoundEffect(combatAction.Owner.HasTrait(Trait.Female) ? SfxName.TripFemale : SfxName.TripMale)
+                                    .WithSoundEffect(combatAction.Owner.HasTrait(Trait.Female) ? SfxName.TripFemale : combatAction.Owner.HasTrait(Trait.Male) ? SfxName.TripMale : SfxName.BeastRoar)
                                     .WithEffectOnEachTarget((Delegates.EffectOnEachTarget)(async (spell, a, d, cr) => {
                                         switch (cr) {
                                             case CheckResult.CriticalFailure:
@@ -277,7 +299,7 @@ namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
                         });
 
                         StrikeModifiers strikeMod = new StrikeModifiers() {
-                            CalculatedTrueDamageFormula = DiceFormula.FromText("1d6")
+                            CalculatedTrueDamageFormula = DiceFormula.FromText("1d6", "Cruel Taskmistress")
                         };
 
                         CombatAction attack = effect.Owner.CreateStrike(fakeWhip, -1, strikeMod);
@@ -313,6 +335,92 @@ namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
             });
 
             return effect;
+        }
+
+        public static QEffect RetributiveStrike(int reduction, Func<Creature, bool> filter, string targetDesc, bool step) {
+
+            QEffect effect = new QEffect("Retributive Strike {icon:Reaction}", "{b}Trigger{/b} An enemy damages " + targetDesc + " and both are within 15 feet of you. " +
+                "{b}Effect{/b} The ally gains resistance " + reduction + " to all damage against the triggering attack. If the foe is within reach, make a melee Strike against it." +
+                (step ? " If the target is out of range, you can step to put the foe within your reach." : "")) {
+                Innate = true,
+            };
+
+            effect.AddGrantingOfTechnical(filter, qf => {
+                qf.YouAreDealtDamage = async (qfAlly, attacker, damageStuff, defender) => {
+                    if (attacker == null || attacker.Occupies == null || !attacker.EnemyOf(effect.Owner) || attacker.DistanceTo(effect.Owner) > 3)
+                        return (DamageModification)null;
+                    if (!await effect.Owner.Battle.AskToUseReaction(effect.Owner, attacker?.ToString() + " is about to deal " + damageStuff.Amount.ToString() + " damage to " + defender?.ToString() + ". Use your champion's reaction to prevent " + reduction.ToString() + " of that damage?"))
+                        return (DamageModification)null;
+
+                    List<Tile> validStepTiles = effect.Owner.Battle.Map.AllTiles.Where(t => t.IsAdjacentTo(effect.Owner.Occupies) && t.DistanceTo(attacker.Occupies) < 3 && attacker.HasLineOfEffectTo(attacker.Occupies) < CoverKind.Blocked).ToList();
+
+                    effect.Owner.Occupies.Overhead("retributive strike!", Color.Orange, effect.Owner?.ToString() + " uses retributive strike!");
+                    effect.Owner.AddQEffect(new QEffect(ExpirationCondition.Never) {
+                        StateCheckWithVisibleChanges = async qfStrikeBack => {
+                            qfStrikeBack.StateCheckWithVisibleChanges = null;
+                            qfStrikeBack.ExpiresAt = ExpirationCondition.Immediately;
+                            Item championMainWeapon = effect.Owner.PrimaryWeapon;
+                            if (championMainWeapon == null || !championMainWeapon.HasTrait(Trait.Melee))
+                                return;
+                            CombatAction meleeStrike = effect.Owner.CreateStrike(championMainWeapon).WithActionCost(0);
+                            CreatureTarget meleeStrikeTarget = (CreatureTarget)meleeStrike.Target;
+                            if ((bool)meleeStrike.CanBeginToUse(effect.Owner) && (bool)meleeStrikeTarget.IsLegalTarget(effect.Owner, attacker)) {
+                                meleeStrike.ChosenTargets = ChosenTargets.CreateSingleTarget(attacker);
+                                int num4 = await meleeStrike.AllExecute() ? 1 : 0;
+                            } else if (step && effect.Owner.DistanceTo(attacker) > 2 && validStepTiles.Count > 0) {
+                                Tile bestTile = validStepTiles.OrderBy(t => t.HasLineOfEffectTo(attacker.Occupies)).ToArray()[0];
+                                await effect.Owner.SingleTileMove(bestTile, null);
+                                if (meleeStrikeTarget.IsLegalTarget(effect.Owner, attacker)) {
+                                    meleeStrike.ChosenTargets = new ChosenTargets() {
+                                        ChosenCreature = attacker,
+                                        ChosenCreatures = {
+                                            attacker
+                                        }
+                                    };
+                                    int num5 = await meleeStrike.AllExecute() ? 1 : 0;
+                                }
+                            }
+                            meleeStrike = (CombatAction)null;
+                            meleeStrikeTarget = (CreatureTarget)null;
+                        }
+                    });
+                    return (DamageModification)new ReduceDamageModification(reduction, "Retributive Strike");
+                };
+            });
+            return effect;
+        }
+
+        public static QEffect DrowBloodBond() {
+            return new QEffect("Blood Sworn Guardian", "This creature is sworn to the drow priestesses through demonic blood magic, protecting it from negative energy and allowing members of the drow clergy to siphon their life force at will.") {
+                Id = QEffectIds.BloodBond,
+            };
+        }
+
+        public static QEffect DrowClergy() {
+            return new QEffect() {
+                Id = QEffectIds.DrowClergy,
+                ProvideContextualAction = self => {
+                    if (self.Owner.HP > self.Owner.TrueMaximumHP * 0.33) {
+                        return null;
+                    }
+
+                    return (ActionPossibility)new CombatAction(self.Owner, IllustrationName.VampiricExsanguination, "Activate Blood Bond", new Trait[] { Trait.Magical, Trait.Divine, Trait.Healing, Trait.Necromancy },
+                        "You extract the lifeforce from a bonded serf, dealing 2d6 bleed damage, and healing yourself for twice as much HP.", Target.RangedFriend(3).WithAdditionalConditionOnTargetCreature(new FriendCreatureTargetingRequirement()).WithAdditionalConditionOnTargetCreature((a, d) => !d.HasEffect(QEffectIds.BloodBond) ? Usability.NotUsableOnThisCreature("No blood bond") : Usability.Usable))
+                    .WithActionCost(1)
+                    .WithSoundEffect(SfxName.ElementalBlastWater)
+                    .WithProjectileCone(IllustrationName.VampiricExsanguination, 7, ProjectileKind.Ray)
+                    .WithEffectOnEachTarget(async (spell, caster, target, checkResult) => {
+                        int prevHP = target.HP;
+                        await CommonSpellEffects.DealDirectDamage(spell, DiceFormula.FromText("2d6", "Activate Blood Bond"), target, CheckResult.Success, DamageKind.Bleed);
+                        int healAmount = (prevHP - target.HP) * 2;
+                        await caster.HealAsync(DiceFormula.FromText(healAmount.ToString(), "Activate Blood Bond"), spell);
+                    })
+                    .WithGoodness((targeting, a, d) => {
+                        return 15f + (d.HP / d.MaxHP * 4);
+                    })
+                    ;
+                }
+            };
         }
 
         public static QEffect MiniBoss() {

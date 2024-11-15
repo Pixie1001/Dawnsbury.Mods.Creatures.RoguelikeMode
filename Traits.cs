@@ -6,11 +6,20 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
+using Dawnsbury;
 using Dawnsbury.Audio;
 using Dawnsbury.Auxiliary;
 using Dawnsbury.Core;
 using Dawnsbury.Core.Mechanics.Rules;
 using Dawnsbury.Core.Animations;
+using Dawnsbury.Core.CharacterBuilder;
+using Dawnsbury.Core.CharacterBuilder.AbilityScores;
+using Dawnsbury.Core.CharacterBuilder.Feats;
+using Dawnsbury.Core.CharacterBuilder.FeatsDb.Common;
+using Dawnsbury.Core.CharacterBuilder.FeatsDb.Spellbook;
+using Dawnsbury.Core.CharacterBuilder.FeatsDb.TrueFeatDb;
+using Dawnsbury.Core.CharacterBuilder.Selections.Options;
+using Dawnsbury.Core.CharacterBuilder.Spellcasting;
 using Dawnsbury.Core.CombatActions;
 using Dawnsbury.Core.Coroutines;
 using Dawnsbury.Core.Coroutines.Options;
@@ -54,17 +63,21 @@ using Microsoft.Xna.Framework.Audio;
 using static System.Reflection.Metadata.BlobBuilder;
 using Dawnsbury.Core.CharacterBuilder.FeatsDb;
 using Dawnsbury.Campaign.Encounters;
-using Dawnsbury.Campaign.Path;
-using Dawnsbury.Campaign.Path.CampaignStops;
 using Dawnsbury.Core.Animations.Movement;
 using static Dawnsbury.Mods.Creatures.RoguelikeMode.ModEnums;
-using Dawnsbury.Campaign.Encounters.Quest_for_the_Golden_Candelabra;
+using static Dawnsbury.Mods.Creatures.RoguelikeMode.ModEnums;
 
-namespace Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level1
-{
+namespace Dawnsbury.Mods.Creatures.RoguelikeMode {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class DrowAmbushLv1 : Level1Encounter
-    {
-        public DrowAmbushLv1(string filename) : base("Drow Ambush", filename) { }
+    internal static class Traits {
+
+        internal static Trait Wand { get; } = ModManager.RegisterTrait("RL_Wand", new TraitProperties("Wand", true, "Wands allow a creature capable of casting their spell to do so once per day.", false));
+        internal static Trait CasterWeapon { get; } = ModManager.RegisterTrait("RL_Caster Weapon", new TraitProperties("Caster Weapon", false));
+        internal static Trait CannotHavePropertyRune { get; } = ModManager.RegisterTrait("RL_CannotHavePropertyRune", new TraitProperties("Specific Magic Weapon", true, "This weapon cannot be attached with property runes.", false));
+        internal static Trait LegendaryItem { get; } = ModManager.RegisterTrait("RL_LegendaryItem", new TraitProperties("Legendary Weapon", true, "This weapon cannot be attached with runes of any kind.", false));
+        internal static Trait BoostedWeapon { get; } = ModManager.RegisterTrait("RL_BoostedWeapon", new TraitProperties("Boosted Weapon", false));
+        internal static Trait Spider { get; } = ModManager.RegisterTrait("RL_Spider", new TraitProperties("Spider", true));
+        internal static Trait Witch { get; } = ModManager.RegisterTrait("RL_Witch", new TraitProperties("Witch", false));
+        internal static Trait Hexshot { get; } = ModManager.RegisterTrait("RL_Hexshot", new TraitProperties("Hexshot", false));
     }
 }

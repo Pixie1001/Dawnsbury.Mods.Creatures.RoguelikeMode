@@ -34,26 +34,31 @@ namespace Dawnsbury.Mods.Creatures.RoguelikeMode
             encounters[0].Add(new TypedEncounterCampaignStop<DrowAmbushLv1>());
             encounters[0].Add(new TypedEncounterCampaignStop<RatSwarmLv1>());
             encounters[0].Add(new TypedEncounterCampaignStop<InquisitrixTrapLv1>());
+            encounters[0].Add(new TypedEncounterCampaignStop<SpiderNestLv1>());
 
             // level2Encounters
             encounters[1].Add(new TypedEncounterCampaignStop<DrowAmbushLv2>());
             encounters[1].Add(new TypedEncounterCampaignStop<RatSwarmLv2>());
             encounters[1].Add(new TypedEncounterCampaignStop<InquisitrixTrapLv2>());
+            encounters[0].Add(new TypedEncounterCampaignStop<SpiderNestLv2>());
 
             // level1Encounters
             encounters[2].Add(new TypedEncounterCampaignStop<DrowAmbushLv3>());
             encounters[2].Add(new TypedEncounterCampaignStop<RatSwarmLv3>());
             encounters[2].Add(new TypedEncounterCampaignStop<InquisitrixTrapLv3>());
+            encounters[0].Add(new TypedEncounterCampaignStop<SpiderNestLv3>());
 
             // level1EliteEncounters
-            //eliteEncounters[0].Add(new TypedEncounterCampaignStop<HallOfSmokeLv1>());
-            eliteEncounters[0].Add(new TypedEncounterCampaignStop<RatSwarmLv1>());
+            eliteEncounters[0].Add(new TypedEncounterCampaignStop<HallOfSmokeLv1>());
+            eliteEncounters[0].Add(new TypedEncounterCampaignStop<WitchCovenLv1>());
 
             // level1EliteEncounters
             eliteEncounters[1].Add(new TypedEncounterCampaignStop<HallOfSmokeLv2>());
+            eliteEncounters[0].Add(new TypedEncounterCampaignStop<WitchCovenLv2>());
 
             // level1EliteEncounters
             eliteEncounters[2].Add(new TypedEncounterCampaignStop<HallOfSmokeLv3>());
+            eliteEncounters[0].Add(new TypedEncounterCampaignStop<WitchCovenLv3>());
 
             // Boss Fights
             bossFights.Add(new TypedEncounterCampaignStop<Boss_DriderFight>());

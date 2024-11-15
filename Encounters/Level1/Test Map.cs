@@ -47,9 +47,6 @@ using Dawnsbury.Core.Mechanics.Damage;
 using System.Runtime.CompilerServices;
 using System.ComponentModel.Design;
 using System.Text;
-using static Dawnsbury.Core.CharacterBuilder.FeatsDb.TrueFeatDb.BarbarianFeatsDb.AnimalInstinctFeat;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Diagnostics.Metrics;
 using Microsoft.Xna.Framework.Audio;
 using static System.Reflection.Metadata.BlobBuilder;
 using Dawnsbury.Core.CharacterBuilder.FeatsDb;
@@ -62,9 +59,29 @@ using Dawnsbury.Campaign.Encounters.Quest_for_the_Golden_Candelabra;
 
 namespace Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level1
 {
+
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class DrowAmbushLv1 : Level1Encounter
+    internal class TestMap : Encounter
     {
-        public DrowAmbushLv1(string filename) : base("Drow Ambush", filename) { }
+
+        public TestMap(string filename) : base("Test Map", filename, null, 0)
+        {
+            // Run setup
+            this.ReplaceTriggerWithCinematic(TriggerName.StartOfEncounter, async battle => {
+                Creature td = battle.AllCreatures.FirstOrDefault(cr => cr.OwningFaction.IsEnemy);
+
+                td.AddQEffect(new QEffect() {
+                    AdditionalGoodness = (self, action, target) => {
+                        if (action.HasTrait(Trait.Strike)) {
+                            return 7;
+                        }
+                        return 0;
+                    }
+                });
+                //td.Traits.Add(Trait.Undead);
+                //td.Level = 9;
+            });
+        }
+
     }
 }

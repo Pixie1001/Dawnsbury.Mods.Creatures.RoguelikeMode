@@ -61,26 +61,10 @@ namespace Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level1
 {
 
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class RatSwarmLv1 : Encounter
-    {
+    internal class RatSwarmLv1 : Level1Encounter {
 
-        public RatSwarmLv1(string filename) : base("Rat Swarm", filename, new List<Item>() { }, 0)
+        public RatSwarmLv1(string filename) : base("Rat Swarm", filename)
         {
-
-            this.CharacterLevel = 1;
-            this.RewardGold = CommonEncounterFuncs.GetGoldReward(this.CharacterLevel, ModEnums.EncounterType.NORMAL);
-
-            // Run setup
-            this.ReplaceTriggerWithCinematic(TriggerName.StartOfEncounter, async battle => {
-                CommonEncounterFuncs.ApplyWeakAdjustments(battle);
-                await CommonEncounterFuncs.PresentEliteRewardChoice(battle);
-            });
-
-            //// Run cleanup
-            this.ReplaceTriggerWithCinematic(TriggerName.AllEnemiesDefeated, async battle => {
-                await CommonEncounterFuncs.PresentEliteRewardChoice(battle);
-                await battle.EndTheGame(true, "You defeated all enemies!");
-            });
         }
 
     }

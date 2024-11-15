@@ -73,12 +73,17 @@ using Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level1;
 using Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level2;
 using Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level3;
 using Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.BossFights;
+using System.IO.Enumeration;
 
 namespace Dawnsbury.Mods.Creatures.RoguelikeMode
 {
 
+    // TODO: Add modular AI functions to making adding new enemies easier and lcean up creature list
+
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public static class Loader {
+        internal static string Credits { get; } = "{b}{/b}\n";
+
         internal static Dictionary<ModEnums.CreatureId, Func<Encounter?, Creature>> Creatures = new Dictionary<ModEnums.CreatureId, Func<Encounter?, Creature>>();
 
         [DawnsburyDaysModMainMethod]
@@ -87,49 +92,51 @@ namespace Dawnsbury.Mods.Creatures.RoguelikeMode
             Harmony.DEBUG = true;
             harmony.PatchAll();
 
+            CustomItems.LoadItems();
             CreatureList.LoadCreatures();
             ScriptHooks.LoadHooks();
+            SpellLoader.LoadSpells();
             LoadEncounters();
         }
 
         private static void LoadEncounters() {
-            //ModManager.RegisterEncounter<HallOfBeginnings>("HallOfBeginnings.tmx");
-            //ModManager.RegisterEncounter<DrowAmbushLv1>("RoguelikeEncounter/DrowAmbushLv1.tmx");
-            //ModManager.RegisterEncounter<DrowAmbushLv2>("RoguelikeEncounter/DrowAmbushLv2.tmx");
-            //ModManager.RegisterEncounter<DrowAmbushLv3>("RoguelikeEncounter/DrowAmbushLv3.tmx");
-            //ModManager.RegisterEncounter<InquisitrixTrapLv1>("RoguelikeEncounter/InquisitrixTrapLv1.tmx");
-            //ModManager.RegisterEncounter<InquisitrixTrapLv2>("RoguelikeEncounter/InquisitrixTrapLv2.tmx");
-            //ModManager.RegisterEncounter<InquisitrixTrapLv3>("RoguelikeEncounter/InquisitrixTrapLv3.tmx");
-            //ModManager.RegisterEncounter<RatSwarmLv1>("RoguelikeEncounter/RatSwarmLv1.tmx");
-            //ModManager.RegisterEncounter<RatSwarmLv2>("RoguelikeEncounter/RatSwarmLv2.tmx");
-            //ModManager.RegisterEncounter<RatSwarmLv3>("RoguelikeEncounter/RatSwarmLv3.tmx");
-
-            //// Elite Fights
-            //ModManager.RegisterEncounter<HallOfSmokeLv1>("RoguelikeEncounters/Elite_HallOfSmokeLv1.tmx");
-            //ModManager.RegisterEncounter<HallOfSmokeLv2>("RoguelikeEncounters/Elite_HallOfSmokeLv2.tmx");
-            //ModManager.RegisterEncounter<HallOfSmokeLv3>("RoguelikeEncounters/Elite_HallOfSmokeLv3.tmx");
-
-            //// Boss fights
-            //ModManager.RegisterEncounter<Boss_DriderFight>("RoguelikeEncounters/Boss_DriderFight.tmx");
 
             ModManager.RegisterEncounter<HallOfBeginnings>("HallOfBeginnings.tmx");
-            ModManager.RegisterEncounter<DrowAmbushLv1>("DrowAmbushLv1.tmx");
-            ModManager.RegisterEncounter<DrowAmbushLv2>("DrowAmbushLv2.tmx");
-            ModManager.RegisterEncounter<DrowAmbushLv3>("DrowAmbushLv3.tmx");
-            ModManager.RegisterEncounter<InquisitrixTrapLv1>("InquisitrixTrapLv1.tmx");
-            ModManager.RegisterEncounter<InquisitrixTrapLv2>("InquisitrixTrapLv2.tmx");
-            ModManager.RegisterEncounter<InquisitrixTrapLv3>("InquisitrixTrapLv3.tmx");
-            ModManager.RegisterEncounter<RatSwarmLv1>("RatSwarmLv1.tmx");
-            ModManager.RegisterEncounter<RatSwarmLv2>("RatSwarmLv2.tmx");
-            ModManager.RegisterEncounter<RatSwarmLv3>("RatSwarmLv3.tmx");
+            RegisterEncounter<DrowAmbushLv1>("DrowAmbushLv2.tmx", "DrowAmbushLv1");
+            RegisterEncounter<DrowAmbushLv2>("DrowAmbushLv2.tmx", "DrowAmbushLv2");
+            RegisterEncounter<DrowAmbushLv3>("DrowAmbushLv2.tmx", "DrowAmbushLv3");
+            RegisterEncounter<InquisitrixTrapLv1>("InquisitrixTrapLv2.tmx", "InquisitrixTrapLv1");
+            RegisterEncounter<InquisitrixTrapLv2>("InquisitrixTrapLv2.tmx", "InquisitrixTrapLv2");
+            RegisterEncounter<InquisitrixTrapLv3>("InquisitrixTrapLv2.tmx", "InquisitrixTrapLv3");
+            RegisterEncounter<RatSwarmLv1>("RatSwarmLv2.tmx", "RatSwarmLv1");
+            RegisterEncounter<RatSwarmLv2>("RatSwarmLv2.tmx", "RatSwarmLv2");
+            RegisterEncounter<RatSwarmLv3>("RatSwarmLv2.tmx", "RatSwarmLv3");
+            RegisterEncounter<SpiderNestLv1>("SpiderNest.tmx", "SpiderNestLv1");
+            RegisterEncounter<SpiderNestLv2>("SpiderNest.tmx", "SpiderNestLv2");
+            RegisterEncounter<SpiderNestLv3>("SpiderNest.tmx", "SpiderNestLv3");
+            RegisterEncounter<AqueductsLv1>("Aqueducts.tmx", "AqueductsLv1");
+            RegisterEncounter<AqueductsLv2>("Aqueducts.tmx", "AqueductsLv2");
+            RegisterEncounter<AqueductsLv3>("Aqueducts.tmx", "AqueductsLv3");
 
             // Elite Fights
-            ModManager.RegisterEncounter<HallOfSmokeLv1>("Elite_HallOfSmokeLv1.tmx");
-            ModManager.RegisterEncounter<HallOfSmokeLv2>("Elite_HallOfSmokeLv2.tmx");
-            ModManager.RegisterEncounter<HallOfSmokeLv3>("Elite_HallOfSmokeLv3.tmx");
+            RegisterEncounter<HallOfSmokeLv1>("Elite_HallOfSmokeLv2.tmx", "Elite_HallOfSmokeLv1");
+            RegisterEncounter<HallOfSmokeLv2>("Elite_HallOfSmokeLv2.tmx", "Elite_HallOfSmokeLv2");
+            RegisterEncounter<HallOfSmokeLv3>("Elite_HallOfSmokeLv2.tmx", "Elite_HallOfSmokeLv3");
+            RegisterEncounter<WitchCovenLv1>("Elite_WitchCoven.tmx", "Elite_WitchCovenLv1");
+            RegisterEncounter<WitchCovenLv2>("Elite_WitchCoven.tmx", "Elite_WitchCovenLv2");
+            RegisterEncounter<WitchCovenLv3>("Elite_WitchCoven.tmx", "Elite_WitchCovenLv3");
 
             // Boss fights
-            ModManager.RegisterEncounter<Boss_DriderFight>("Boss_DriderFight.tmx");
+            RegisterEncounter<Boss_DriderFight>("Boss_DriderFight.tmx", "Boss_DriderFight");
+
+            // Other
+            RegisterEncounter<TestMap>("TestHall.tmx", "TestHall.tmx");
+        }
+
+        private static void RegisterEncounter<T>(string filename, string key) where T : Encounter {
+            RegisteredEncounters.RegisteredEncounterInfo registeredEncounterInfo = new RegisteredEncounters.RegisteredEncounterInfo(() => (Encounter)Activator.CreateInstance(typeof(T), filename));
+            RegisteredEncounters.RegisteredEncountersBySimpleFilename.Add(key, registeredEncounterInfo);
+            RegisteredEncounters.RegisteredEncountersByType.Add(typeof(T), registeredEncounterInfo);
         }
     }
 }

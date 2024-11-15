@@ -72,24 +72,10 @@ namespace Dawnsbury.Mods.Creatures.RoguelikeMode.Encounters.Level3
 {
 
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class DrowAmbushLv3 : Encounter
-    {
+    internal class DrowAmbushLv3 : Level3Encounter {
 
-        public DrowAmbushLv3(string filename) : base("Drow Ambush", filename, new List<Item>() { }, 0)
+        public DrowAmbushLv3(string filename) : base("Drow Ambush", filename)
         {
-
-            this.CharacterLevel = 3;
-            this.RewardGold = CommonEncounterFuncs.GetGoldReward(this.CharacterLevel, ModEnums.EncounterType.NORMAL);
-
-            // Run setup
-            this.ReplaceTriggerWithCinematic(TriggerName.StartOfEncounter, async battle => {
-                CommonEncounterFuncs.ApplyEliteAdjustments(battle);
-            });
-
-            //// Run cleanup
-            //this.ReplaceTriggerWithCinematic(TriggerName.AllEnemiesDefeated, async battle => {
-
-            //});
         }
 
     }
